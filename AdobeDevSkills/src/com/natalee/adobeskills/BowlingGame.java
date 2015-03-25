@@ -39,13 +39,18 @@ public class BowlingGame {
 	
 	}
 	
+	public int getScore() {
+		return 0;
+	}
+	
+	public boolean isFinished() {
+		return true;
+	}
+	
 	
 	// need to update previous scores if strikes on next 2 turns,
 	// same with spares
 	
-	
-
-
 	
 	
 }
