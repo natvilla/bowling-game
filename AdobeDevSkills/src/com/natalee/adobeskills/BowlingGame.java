@@ -23,10 +23,10 @@ public class BowlingGame {
 
 	// keeps track of score per ball rolled,
 	// so pins knocked down at frameX = mPinScores[2X] + mPinScores[2X+1]
-	// this is 21 total rolls - 2*9 frames + 3 for the 10th frame
+	// this is 21 total potential rolls - 2*9 frames + 3 for the 10th frame
 	private int[] mPinScores;
 
-	// position to update roll array
+	// position to update roll array [0,20]
 	private int mRollNumber;
 
 	// frameIdx in [0,9]
@@ -54,20 +54,19 @@ public class BowlingGame {
 		}
 
 		// don't let a bowler bowl more than their turns
-		if (this.mRollNumber > 20)
+		if (mRollNumber > 20)
 			return;
 
-		this.mPinScores[mRollNumber] = pins;
+		mPinScores[mRollNumber] = pins;
 
-		// if frame was strike, advance pointer 2 to next bowling frame, unless
-		// 10th frame
+		// if frame was strike and not 10th frame, advance pointer 2 to next bowling frame
 		// else advance 1
-		if (this.mRollNumber % 2 == 0 && pins == 10 && this.mRollNumber < 18) {
-			this.mRollNumber++;
+		if (isBallOne() && pins == 10 && !isTenthFrame()) {
+			mRollNumber++;
 		}
 
 		// advance pointer to rolls
-		this.mRollNumber++;
+		mRollNumber++;
 	}
 
 	// helper function for 'roll()' to ensure roll is valid
@@ -78,9 +77,9 @@ public class BowlingGame {
 		}
 
 		// also 2 rolls cannot add up to be more than 10 except for 10th frame
-		if (this.mRollNumber % 2 == 1
-				&& (pins + this.mPinScores[mRollNumber - 1] > 10)
-				&& this.mRollNumber < 18) {
+		if (!isBallOne()
+				&& (pins + mPinScores[mRollNumber-1] > 10)
+				&& !isTenthFrame()) {
 			return true;
 		}
 		return false;
@@ -111,14 +110,13 @@ public class BowlingGame {
 	 *         turns left in the game
 	 */
 	public boolean isFinished() {
-		// if mBallPosition < 20, turns are left since pointer advances after
-		// roll
-		if (this.mRollNumber < 20)
+		// if mBallPosition < 20, turns are left since pointer advances after roll
+		if (mRollNumber < 20)
 			return false;
 
 		// if bowler gets strike or spare in the 10th frame of 2 bowls,
 		// a bonus roll is awarded
-		if (this.mRollNumber == 20 && (frameIsStrike(9) || frameIsSpare(9)))
+		if (mRollNumber == 20 && (frameIsStrike(9) || frameIsSpare(9)))
 			return false;
 
 		return true;
@@ -131,12 +129,20 @@ public class BowlingGame {
 	private int pinsForFrame(int frameIdx) {
 		// if last frame, add score for 3 rolls
 		// else add scores for 2 rolls
-		int pins = this.mPinScores[frameIdx * 2]
-				+ this.mPinScores[frameIdx * 2 + 1];
+		int pins = mPinScores[frameIdx * 2]
+				+ mPinScores[frameIdx * 2 + 1];
 		if (frameIdx == 9)
-			return pins + this.mPinScores[frameIdx * 2 + 2];
+			return pins + mPinScores[frameIdx * 2 + 2];
 
 		return pins;
+	}
+	
+	private boolean isBallOne() {
+		return this.mRollNumber % 2 == 0;
+	}
+	
+	private boolean isTenthFrame() {
+		return this.mRollNumber >= 18;
 	}
 
 	/**
@@ -145,7 +151,7 @@ public class BowlingGame {
 	 * @return Return true if 10 pins are struck in first roll of frameIdx
 	 */
 	private boolean frameIsStrike(int frameIdx) {
-		if (this.mPinScores[frameIdx * 2] == 10) {
+		if (mPinScores[frameIdx * 2] == 10) {
 			return true;
 		}
 		return false;
@@ -168,15 +174,14 @@ public class BowlingGame {
 	 * @return The points for the frame if the frame was a strike.
 	 */
 	private int framePointsForStrike(int frameIdx) {
-		// if frame is 8 or 9, get points for rolls of 10th frame, not 10th
-		// frame itself
+		// if frame is 8 or 9, get points for rolls of 10th frame, not 10th frame itself
 		// 10th frame consists of roll indices 18,19,20
 		if (frameIdx == 7)
 			return pinsForFrame(frameIdx) + pinsForFrame(frameIdx + 1)
-					+ this.mPinScores[18];
+					+ mPinScores[18];
 		else if (frameIdx == 8)
-			return pinsForFrame(frameIdx) + this.mPinScores[18]
-					+ this.mPinScores[19];
+			return pinsForFrame(frameIdx) + mPinScores[18]
+					+ mPinScores[19];
 		else if (frameIdx == 9)
 			return pinsForFrame(frameIdx);
 		else
@@ -189,11 +194,10 @@ public class BowlingGame {
 	 * @return The points for the frame if the frame was a spare.
 	 */
 	private int framePointsForSpare(int frameIdx) {
-		// if frame is 9, get points for rolls of 10th frame, not 10th frame
-		// itself
+		// if frame is 9, get points for rolls of 10th frame, not 10th frame itself
 		// 10th frame consists of roll indices 18,19,20
 		if (frameIdx == 8)
-			return pinsForFrame(frameIdx) + this.mPinScores[18];
+			return pinsForFrame(frameIdx) + mPinScores[18];
 		else if (frameIdx == 9)
 			return pinsForFrame(frameIdx);
 		else
