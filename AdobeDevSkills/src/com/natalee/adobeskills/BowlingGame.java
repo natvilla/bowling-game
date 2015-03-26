@@ -31,10 +31,12 @@ public class BowlingGame {
 	private int[] mPinScores;
 
 	// position to update roll array [0,20]
-	private int mRollNumber;
-
+	// if mRollNumber is even, then roll 1 of frame, else roll 2 of frame
+	// and
 	// frameIdx in [0,9]
 	// frameIdx = mRollNumber / 2, except for roll 20
+	private int mRollNumber;
+
 
 	// constructor
 	public BowlingGame() {
