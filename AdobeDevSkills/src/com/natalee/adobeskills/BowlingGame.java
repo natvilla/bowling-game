@@ -198,7 +198,7 @@ public class BowlingGame {
 	 * @return The points for the frame if the frame was a spare.
 	 */
 	private int framePointsForSpare(int frameIdx) {
-		// if frame is 9, get points for rolls of 10th frame
+		// if frame is 9, get points for rolls of frame
 		// else get points for frame & next roll
 		if (frameIdx == 9)
 			return pinsForFrame(frameIdx);

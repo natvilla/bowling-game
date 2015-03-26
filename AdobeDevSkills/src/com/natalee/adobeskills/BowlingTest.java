@@ -258,6 +258,7 @@ public class BowlingTest {
 		assertEquals(true, game.isFinished());	
 	}
 	
+	
 	@Test
 	public void testGetBonusBallSpare() { 
 		BowlingGame game = new BowlingGame();
