@@ -84,23 +84,23 @@ public class BowlingTest {
 		assertEquals(true, game.isFinished());	
 	}
 	
-//	@Test
-//	public void testSampleData6() { // this might be wrong on sheet
-//		BowlingGame game = new BowlingGame();
-//		assertEquals(0, game.getScore());
-//		assertEquals(false, game.isFinished());
-//		
-//		game.roll(10);
-//		game.roll(9);
-//		game.roll(1);
-//		game.roll(9);
-//		for (int i=4; i < 19; i++) {
-//			game.roll(0);
-//		}
-//		
-//		assertEquals(48, game.getScore());
-//		assertEquals(true, game.isFinished());	
-//	}
+	@Test
+	public void testSampleData6() {
+		BowlingGame game = new BowlingGame();
+		assertEquals(0, game.getScore());
+		assertEquals(false, game.isFinished());
+		
+		game.roll(10);
+		game.roll(9);
+		game.roll(1);
+		game.roll(9);
+		for (int i=4; i < 19; i++) {
+			game.roll(0);
+		}
+		
+		assertEquals(48, game.getScore());
+		assertEquals(true, game.isFinished());	
+	}
 	
 	@Test
 	public void testSampleData7() { 
@@ -288,6 +288,34 @@ public class BowlingTest {
 			game.roll(10);
 		}
 		assertEquals(300, game.getScore());
+		assertEquals(true, game.isFinished());	
+	}
+	
+	@Test
+	public void testThrowAfterDone2() { 
+		BowlingGame game = new BowlingGame();
+		assertEquals(0, game.getScore());
+		assertEquals(false, game.isFinished());
+		
+		for (int i=0; i < 21; i++) {
+			game.roll(4);
+		}
+		assertEquals(80, game.getScore());
+		assertEquals(true, game.isFinished());	
+	}
+	
+	@Test
+	public void testLastFramesStrike() { 
+		BowlingGame game = new BowlingGame();
+		assertEquals(0, game.getScore());
+		assertEquals(false, game.isFinished());
+		
+		int[] rolls = new int[]{10,7,3,9,0,10,0,8,8,2,0,6,10,10,10,8,1};
+		
+		for (int i=0; i < rolls.length; i++) {
+			game.roll(rolls[i]);
+		}
+		assertEquals(167, game.getScore());
 		assertEquals(true, game.isFinished());	
 	}
 	

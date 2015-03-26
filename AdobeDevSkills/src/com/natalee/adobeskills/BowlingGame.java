@@ -6,11 +6,15 @@ package com.natalee.adobeskills;
  * 
  * Bowling scoring rules: 
  * 	If strike at frame[i], then score[i] = 10 + score[i+1]
- * 		+ score[i+2] (original score <= 10) 
+ * 		+ score[i+2] (original score <= 10) -> next 2 rolls
+ *  If 8th frame strike, add 9th frame and 1st bowl of 10th frame
+ *  If 9th frame strike, add 1st 2 bowls of 10th frame
  * 
  * 	If spare at frame[i], then score[i] = 10
- * 		+ score[i+1] If 10 pins in 10th frame, bowler allowed 3 balls for that frame,
+ * 		+ score[i+1] -> next roll
+ *  If 10 pins in 10th frame, bowler allowed 3 balls for that frame,
  * 		for potential of 12 strikes in a game 
+ *  If 9th frame spare, add 1st bowl of 10th frame
  * 
  * 	Else, player is awarded number of pins
  * 		contributing to the total score
@@ -53,8 +57,8 @@ public class BowlingGame {
 			throw new IllegalArgumentException("Invalid input.");
 		}
 
-		// don't let a bowler bowl more than their turns
-		if (mRollNumber > 20)
+		// don't let a bowler bowl if the game is done
+		if (this.isFinished())
 			return;
 
 		mPinScores[mRollNumber] = pins;
@@ -174,19 +178,19 @@ public class BowlingGame {
 	 * @return The points for the frame if the frame was a strike.
 	 */
 	private int framePointsForStrike(int frameIdx) {
-		// if frame is 8 or 9, get points for rolls of 10th frame, not 10th frame itself
+		// if frame is 8 or 9, get points for rolls of 10th frame
 		// 10th frame consists of roll indices 18,19,20
-		if (frameIdx == 7)
-			return pinsForFrame(frameIdx) + pinsForFrame(frameIdx + 1)
-					+ mPinScores[18];
-		else if (frameIdx == 8)
+		if (frameIdx == 8)
 			return pinsForFrame(frameIdx) + mPinScores[18]
 					+ mPinScores[19];
-		else if (frameIdx == 9)
+		if (frameIdx == 9)
 			return pinsForFrame(frameIdx);
+		// the next frame is strike, add next frame & first roll from frame after
+		if (frameIsStrike(frameIdx+1)) 
+			return pinsForFrame(frameIdx) + pinsForFrame(frameIdx+1) + mPinScores[(frameIdx+2)*2];
+		// else next two rolls are next frame
 		else
-			return pinsForFrame(frameIdx) + pinsForFrame(frameIdx + 1)
-					+ pinsForFrame(frameIdx + 2);
+			return pinsForFrame(frameIdx) + pinsForFrame(frameIdx+1);
 	}
 
 	/**
@@ -194,14 +198,12 @@ public class BowlingGame {
 	 * @return The points for the frame if the frame was a spare.
 	 */
 	private int framePointsForSpare(int frameIdx) {
-		// if frame is 9, get points for rolls of 10th frame, not 10th frame itself
-		// 10th frame consists of roll indices 18,19,20
-		if (frameIdx == 8)
-			return pinsForFrame(frameIdx) + mPinScores[18];
-		else if (frameIdx == 9)
+		// if frame is 9, get points for rolls of 10th frame
+		// else get points for frame & next roll
+		if (frameIdx == 9)
 			return pinsForFrame(frameIdx);
 		else
-			return pinsForFrame(frameIdx) + pinsForFrame(frameIdx + 1);
+			return pinsForFrame(frameIdx) + mPinScores[(frameIdx+1)*2];
 	}
 
 }
